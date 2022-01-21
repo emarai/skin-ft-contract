@@ -40,18 +40,17 @@ impl Contract {
     /// Initializes the contract with the given total supply owned by the given `owner_id` with
     /// default metadata (for example purposes only).
     #[init]
-    pub fn new_default_meta(owner_id: ValidAccountId, total_supply: U128) -> Self {
+    pub fn new_default_meta(owner_id: ValidAccountId) -> Self {
         Self::new(
             owner_id,
-            total_supply,
             FungibleTokenMetadata {
                 spec: FT_METADATA_SPEC.to_string(),
-                name: "Example NEAR fungible token".to_string(),
-                symbol: "EXAMPLE".to_string(),
+                name: "Example SKIN fungible token".to_string(),
+                symbol: "SKIN".to_string(),
                 icon: Some(DATA_IMAGE_SVG_NEAR_ICON.to_string()),
                 reference: None,
                 reference_hash: None,
-                decimals: 24,
+                decimals: 18,
             },
         )
     }
@@ -61,7 +60,6 @@ impl Contract {
     #[init]
     pub fn new(
         owner_id: ValidAccountId,
-        total_supply: U128,
         metadata: FungibleTokenMetadata,
     ) -> Self {
         assert!(!env::state_exists(), "Already initialized");
@@ -71,8 +69,12 @@ impl Contract {
             metadata: LazyOption::new(b"m".to_vec(), Some(&metadata)),
         };
         this.token.internal_register_account(owner_id.as_ref());
-        this.token.internal_deposit(owner_id.as_ref(), total_supply.into());
         this
+    }
+
+    // WARNING: NO GUARD
+    pub fn mint_tokens(&mut self, receiver_id: ValidAccountId, amount: U128) {
+        self.token.internal_deposit(&receiver_id.to_string(), amount.into());
     }
 
     fn on_account_closed(&mut self, account_id: AccountId, balance: Balance) {
