@@ -73,8 +73,13 @@ impl Contract {
     }
 
     // WARNING: NO GUARD
-    pub fn mint_tokens(&mut self, receiver_id: ValidAccountId, amount: U128) {
+    pub fn mint_tokens(&mut self, receiver_id: ValidAccountId, amount: U128) -> U128 {
+        if self.token.storage_balance_of(receiver_id.clone()).is_none() {
+            self.token.internal_register_account(&receiver_id.to_string());
+        }
         self.token.internal_deposit(&receiver_id.to_string(), amount.into());
+        log!("Account {} now has balance of {}", receiver_id.to_string(), self.token.ft_balance_of(receiver_id).0.to_string());
+        amount
     }
 
     fn on_account_closed(&mut self, account_id: AccountId, balance: Balance) {
