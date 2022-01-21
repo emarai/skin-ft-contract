@@ -1,3 +1,16 @@
+# Call
+
+## Init
+```bash
+near call --accountId dev-1642749960038-75584185908370 dev-1642749960038-75584185908370 new_default_meta '{"owner_id":
+"dev-1642749960038-75584185908370"}'
+```
+
+## Mint tokens (testing only)
+```bash
+near call --accountId gnaor.testnet dev-1642749960038-75584185908370 mint_tokens '{"receiver_id":"gnaor.testnet","amount":"1000000000000000000000"}'
+```
+
 Fungible Token (FT)
 ===================
 
